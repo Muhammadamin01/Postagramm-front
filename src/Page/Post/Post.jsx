@@ -620,14 +620,12 @@
 
 
 
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
   Button, Form, FormGroup, Label, Input, Card, CardBody,
-  Modal, ModalHeader, ModalBody, Spinner, CustomInput
+  Modal, ModalHeader, ModalBody, Spinner
 } from 'reactstrap';
 import { FaEdit, FaTrash, FaCheck, FaTimes, FaPaperPlane } from 'react-icons/fa';
 import io from 'socket.io-client';
@@ -663,7 +661,7 @@ const Post = () => {
   const [modal, setModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
-  const [newPost, setNewPost] = useState({ description: '', file: null, imageUrl: null }); // Added imageUrl to state
+  const [newPost, setNewPost] = useState({ description: '', file: null, imageUrl: null });
   const [postActionLoading, setPostActionLoading] = useState(false);
   const [postDeleteLoading, setPostDeleteLoading] = useState({});
   const [postLikeLoading, setPostLikeLoading] = useState({});
@@ -681,6 +679,10 @@ const Post = () => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [commentDeleteLoading, setCommentDeleteLoading] = useState({});
   const [commentUpdateLoading, setCommentUpdateLoading] = useState({});
+
+  // New state to track if the user wants to clear the image
+  const [clearExistingImage, setClearExistingImage] = useState(false);
+
 
   const navigate = useNavigate();
   const API_URL = 'https://postagramm-backend.onrender.com/api/post';
@@ -753,15 +755,16 @@ const Post = () => {
     return () => {
       socket.off('newComment');
     };
-  }, [navigate]);
+  }, [navigate, userId]); // Add userId to dependency array
 
   const toggleModal = () => {
     setModal(!modal);
     if (!modal) {
-      setNewPost({ description: '', file: null, imageUrl: null }); // Reset imageUrl
+      setNewPost({ description: '', file: null, imageUrl: null });
       setEditMode(false);
       setEditingPostId(null);
       setError(null);
+      setClearExistingImage(false); // Reset clear image flag
     }
   };
 
@@ -784,19 +787,20 @@ const Post = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setNewPost({ ...newPost, file, imageUrl: file ? URL.createObjectURL(file) : null }); // Set imageUrl for preview
+    setNewPost({ ...newPost, file, imageUrl: file ? URL.createObjectURL(file) : null });
+    setClearExistingImage(false); // If a new file is selected, user doesn't want to clear
   };
 
   const handleClearImage = () => {
-    setNewPost({ ...newPost, file: null, imageUrl: null });
-    // This will clear the file input as well, if it's a controlled component or reset
-    document.getElementById('file').value = ''; // Manually clear file input
+    setNewPost({ ...newPost, file: null, imageUrl: null }); // Clear both file and preview URL
+    setClearExistingImage(true); // Set the flag to true
+    document.getElementById('file').value = ''; // Manually clear file input for better UX
   };
 
 
   const handleCreatePost = async () => {
-    if (!newPost.description.trim()) {
-      setError('Post matni bo‘sh bo‘lmasligi kerak!');
+    if (!newPost.description.trim() && !newPost.file) { // Allow posts with only an image
+      setError('Post matni yoki rasm bo‘sh bo‘lmasligi kerak!');
       return;
     }
 
@@ -825,34 +829,25 @@ const Post = () => {
   };
 
   const handleUpdatePost = async () => {
-    if (!newPost.description.trim()) {
-      setError('Post matni bo‘sh bo‘lmasligi kerak!');
-      return;
+    if (!newPost.description.trim() && !newPost.file && !clearExistingImage) { // If no text, no new file, and not clearing image
+      // Check if the post originally had an image and the user is neither updating nor clearing it
+      const originalPost = posts.find(p => p._id === editingPostId);
+      if (!originalPost || (!originalPost.content && !originalPost.postImage?.url)) {
+          setError('Post matni yoki rasm bo‘sh bo‘lmasligi kerak!');
+          return;
+      }
     }
 
     const formData = new FormData();
     formData.append('content', newPost.description);
-    // Only append 'postImage' if a new file is selected or if the image is being cleared.
-    // If newPost.file is null, it means no new file is selected OR the user explicitly cleared it.
-    // The backend should handle null or missing 'postImage' to mean "no change to image" or "clear image".
-    // For clearing, we might need a specific flag or send an empty file.
-    // A common approach for "clearing" on the backend is to send a specific flag or a special value.
-    // Let's assume sending an empty file or not sending 'postImage' when `newPost.file` is `null`
-    // will instruct the backend to clear the image.
-    if (newPost.file) {
-      formData.append('postImage', newPost.file);
-    } else if (newPost.imageUrl === null && posts.find(p => p._id === editingPostId)?.imageUrl) {
-        // If imageUrl is explicitly set to null by user and there was an original image,
-        // it means user wants to remove the image. We need a way to tell the backend.
-        // A common practice is to send a specific field like `clearImage: true`
-        // or a special string like 'REMOVE_IMAGE' for the image field.
-        // For simplicity here, if newPost.file is null and there was an image,
-        // we'll explicitly tell the backend to remove it. You might need to adjust your backend.
-        formData.append('clearImage', true); // Assuming your backend understands this flag
-    }
-    // If newPost.file is null and newPost.imageUrl is null (no image and no old image),
-    // then no image-related field is appended, which is fine.
 
+    if (newPost.file) {
+      formData.append('postImage', newPost.file); // New file selected
+    } else if (clearExistingImage) {
+      formData.append('clearImage', true); // Explicitly tell backend to clear the image
+    }
+    // If newPost.file is null and clearExistingImage is false, no image-related field is appended,
+    // meaning the existing image (if any) should remain untouched.
 
     try {
       setPostActionLoading(true);
@@ -1044,7 +1039,13 @@ const Post = () => {
   const openEditModal = (post) => {
     setEditMode(true);
     setEditingPostId(post._id);
-    setNewPost({ description: post.content, file: null, imageUrl: post.imageUrl || null }); // Set existing imageUrl
+    // Initialize newPost with current post's content and imageUrl
+    setNewPost({
+      description: post.content,
+      file: null, // No file initially selected for edit mode
+      imageUrl: post.postImage?.url || null // Use existing image URL if available
+    });
+    setClearExistingImage(false); // Reset clear flag when opening edit modal
     setModal(true);
     setError(null);
   };
@@ -1052,6 +1053,8 @@ const Post = () => {
   return (
     <div className='post-page d-flex flex-column min-vh-100'>
       {postsLoading && <CustomLoader />}
+
+      <Navbar /> {/* Assuming Navbar is part of the layout */}
 
       <div className="text-center mt-5">
         {error && <div className="alert alert-danger">{error}</div>}
@@ -1125,6 +1128,7 @@ const Post = () => {
                     </div>
                   )}
                 </FormGroup>
+                {error && <div className="text-danger mb-3">{error}</div>} {/* Display error inside modal */}
                 <Button
                   color="success"
                   onClick={editMode ? handleUpdatePost : handleCreatePost}
@@ -1133,10 +1137,10 @@ const Post = () => {
                 >
                   {postActionLoading ? (
                     <>
-                      <Spinner size="sm" color="light" /> {editMode ? 'Edit...' : 'Yuklanmoqda...'}
+                      <Spinner size="sm" color="light" /> {editMode ? 'Saqlanmoqda...' : 'Yuklanmoqda...'}
                     </>
                   ) : (
-                    editMode ? 'Edit' : 'Qoshish'
+                    editMode ? 'Saqlash' : 'Qo‘shish'
                   )}
                 </Button>
               </Form>
