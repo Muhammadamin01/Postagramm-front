@@ -1,7 +1,7 @@
 import React, { useState, useContext, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { NotificationContext } from '../../Context/NotificationContex';
-import { FaHome, FaUser, FaPlus, FaUsers, FaBell, FaSignOutAlt, FaUserShield } from 'react-icons/fa';
+import { FaHome, FaUser, FaPlus, FaUsers, FaBell, FaSignOutAlt, FaUserShield, FaBars, FaTimes } from 'react-icons/fa'; // FaBars va FaTimes ikonkalari borligiga ishonch hosil qiling
 import './Navbar.css';
 
 const Navbar = () => {
@@ -22,47 +22,61 @@ const Navbar = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('role');
     navigate('/auth', { replace: true });
+    setIsMenuOpen(false); // Logout bo'lganda menuni yopish
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="container">
         <div className="navbar-brand">
-          <Link to="/home" className="logo" style={{ color: 'white' }}>
+          <Link to="/home" className="logo" style={{ color: 'white' }} onClick={closeMenu}>
             <img
-            width={55}
+              width={55}
               className="logo_img"
               src="https://images.seeklogo.com/logo-png/11/2/post-logo-png_seeklogo-111042.png"
-              alt=""
+              alt="Logo"
             />
           </Link>
         </div>
-        <div className={`link-all${isMenuOpen ? ' active' : ''}`}>
-          <Link to="/home" className={`nav-link ${location.pathname === '/home' ? 'active-link' : ''}`}>
+
+        <div className="menu-icon" onClick={toggleMenu}>
+          {isMenuOpen ? <FaTimes /> : <FaBars />}
+        </div>
+
+        <div className={`link-all ${isMenuOpen ? 'active' : ''}`}>
+          <Link to="/home" className={`nav-link ${location.pathname === '/home' ? 'active-link' : ''}`} onClick={closeMenu}>
             <span className="nav-icon-wrapper">
               <FaHome className="nav-icon" />
             </span>
             <span className="nav-text">Home</span>
           </Link>
-          <Link to="/profile" className={`nav-link ${location.pathname === '/profile' ? 'active-link' : ''}`}>
+          <Link to="/profile" className={`nav-link ${location.pathname === '/profile' ? 'active-link' : ''}`} onClick={closeMenu}>
             <span className="nav-icon-wrapper">
               <FaUser className="nav-icon" />
             </span>
             <span className="nav-text">Profile</span>
           </Link>
-          <Link to="/post" className={`nav-link ${location.pathname === '/post' ? 'active-link' : ''}`}>
+          <Link to="/post" className={`nav-link ${location.pathname === '/post' ? 'active-link' : ''}`} onClick={closeMenu}>
             <span className="nav-icon-wrapper">
               <FaPlus className="nav-icon" />
             </span>
             <span className="nav-text">Post</span>
           </Link>
-          <Link to="/users" className={`nav-link ${location.pathname === '/users' ? 'active-link' : ''}`}>
+          <Link to="/users" className={`nav-link ${location.pathname === '/users' ? 'active-link' : ''}`} onClick={closeMenu}>
             <span className="nav-icon-wrapper">
               <FaUsers className="nav-icon" />
             </span>
             <span className="nav-text">Users</span>
           </Link>
-          <Link to="/notifications" className={`nav-link ${location.pathname === '/notifications' ? 'active-link' : ''}`}>
+          <Link to="/notifications" className={`nav-link ${location.pathname === '/notifications' ? 'active-link' : ''}`} onClick={closeMenu}>
             <span className="nav-icon-wrapper notification-icon-wrapper">
               <FaBell className="nav-icon" />
               {unreadCount > 0 && (
@@ -72,7 +86,7 @@ const Navbar = () => {
             <span className="nav-text">Notifications</span>
           </Link>
           {role === "101" && (
-            <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active-link' : ''}`}>
+            <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active-link' : ''}`} onClick={closeMenu}>
               <span className="nav-icon-wrapper">
                 <FaUserShield className="nav-icon" />
               </span>

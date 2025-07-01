@@ -1,0 +1,88 @@
+/* Footer.css */
+.footer-container {
+  background-color: #333; /* Dark background for the footer */
+  color: #fff; /* White text */
+  padding: 40px 20px; /* Some padding around the content */
+  display: flex; /* Enable flexbox */
+  flex-wrap: wrap; /* Allow items to wrap to the next line on smaller screens */
+  justify-content: space-around; /* Distribute space around items */
+  align-items: flex-start; /* Align items to the start of the cross axis */
+  font-family: Arial, sans-serif; /* A clean font */
+  border-top: 1px solid #555; /* A subtle top border */
+}
+
+.footer-section {
+  flex: 1; /* Allow sections to grow and shrink */
+  min-width: 250px; /* Minimum width for each section before wrapping */
+  margin: 15px; /* Space between sections */
+}
+
+.footer-section h3 {
+  color: #00bcd4; /* A contrasting color for headings */
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.footer-section p,
+.footer-section ul {
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none; /* Remove bullet points from list */
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 8px;
+}
+
+.footer-section ul li a {
+  color: #fff;
+  text-decoration: none; /* Remove underline from links */
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.footer-section ul li a:hover {
+  color: #00bcd4; /* Change link color on hover */
+}
+
+.footer-bottom {
+  width: 100%; /* Make the copyright section take full width */
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #555; /* Separator for the bottom section */
+  font-size: 0.85em;
+  color: #aaa; /* Slightly lighter color for copyright text */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column; /* Stack sections vertically on smaller screens */
+    align-items: center; /* Center items when stacked */
+    text-align: center; /* Center text within sections */
+  }
+
+  .footer-section {
+    margin: 20px 0; /* More vertical space between stacked sections */
+    min-width: unset; /* Remove min-width to allow full width */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 30px 15px;
+  }
+
+  .footer-section h3 {
+    font-size: 1.1em;
+  }
+
+  .footer-section p,
+  .footer-section ul {
+    font-size: 0.9em;
+  }
+}

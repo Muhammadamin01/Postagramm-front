@@ -1,35 +1,33 @@
-import React from "react";
+// Footer.jsx
+import React from 'react';
+import './Footer.css'; // We'll create this file for styling
 
-const Footer = () => (
-  <footer className="bg-dark text-white mt-5">
-    <div className="container py-4">
-      <div className="row">
-        <div className="col-md-6">
-          <h5>Sayt nomi</h5>
-          <p>Bu yerda sayt haqida qisqacha ma'lumot yoziladi.</p>
-        </div>
-        <div className="col-md-3">
-          <h5>Havolalar</h5>
-          <ul className="list-unstyled">
-            <li><a href="#" className="text-white">Bosh sahifa</a></li>
-            <li><a href="#" className="text-white">Kontakt</a></li>
-            <li><a href="#" className="text-white">Haqida</a></li>
-          </ul>
-        </div>
-        <div className="col-md-3">
-          <h5>Bog'lanish</h5>
-          <ul className="list-unstyled">
-            <li>Email: info@example.com</li>
-            <li>Tel: +998 90 123 45 67</li>
-          </ul>
-        </div>
+const Footer = () => {
+  return (
+    <footer className="footer-container">
+      <div className="footer-section">
+        <h3>About Us</h3>
+        <p>We are a company dedicated to providing the best services.</p>
       </div>
-      <hr className="bg-light"/>
-      <div className="text-center">
-        &copy; {new Date().getFullYear()} Sayt nomi. Barcha huquqlar himoyalangan.
+      <div className="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#privacy">Privacy Policy</a></li>
+        </ul>
       </div>
-    </div>
-  </footer>
-);
+      <div className="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@example.com</p>
+        <p>Phone: +123 456 7890</p>
+      </div>
+      <div className="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
+      </div>
+    </footer>
+  );
+};
 
 export default Footer;

@@ -1,96 +1,63 @@
+/* Navbar.css */
+
 .navbar {
-  background: #0057ff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  padding: 8px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  background-color: blue;
+  padding: 10px 0;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+.navbar .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 18px;
-  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .navbar-brand .logo {
   display: flex;
   align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  color: white !important;
   text-decoration: none;
+}
+
+.navbar-brand .logo_img {
+  height: 40px; /* Adjust as needed */
+  width: auto;
+}
+
+.menu-icon {
+  display: none; /* Hidden by default on larger screens */
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .link-all {
   display: flex;
+  gap: 20px;
   align-items: center;
-  gap: 12px;
-  transition: all 0.2s;
-}
-
-.link-all a {
-  padding: 6px;
 }
 
 .nav-link {
-  display: flex;
-}
-
-.nav-link, .logout-btn {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: white !important;
-  text-decoration: none;
-  font-size: 12px;
-  border-radius: 7px;
-  padding: 4px 9px;
-  font-weight: 500;
-  background: none;
-  border: none;
-  transition: 
-    background 0.25s cubic-bezier(.4,2,.4,1),
-    color 0.17s cubic-bezier(.4,2,.4,1),
-    box-shadow 0.2s;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  min-width: 36px;
+  gap: 8px;
+}
+
+.nav-link:hover {
+  background-color: #575757;
+  color: #fff;
 }
 
 .nav-link.active-link {
-  background: linear-gradient(90deg, #008cff 70%, #0057ff 100%);
-  color: #fff !important;
-  box-shadow: 0 2px 8px 0 #008cff21;
-}
-
-.nav-link:hover, .logout-btn:hover {
-  color: #0057ff !important;
-  background: #f2f7ff;
-  box-shadow: 0 4px 16px 0 #0057ff14;
-  transform: translateY(-1px) scale(1.03);
-}
-
-.nav-link:active, .logout-btn:active {
-  background: #ddeaff;
-  color: #008cff !important;
-  transform: scale(0.97);
-}
-
-.logout-btn {
-  color: #ed4956 !important;
-  font-weight: bold;
-}
-
-.logout-btn:hover {
-  color: #fff !important;
-  background: #ed4956;
-  box-shadow: 0 3px 12px 0 #ed495622;
+  background-color: #007bff; /* Example active link color */
+  color: white;
 }
 
 .nav-icon-wrapper {
@@ -98,69 +65,136 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 5px;
-  margin-bottom: 0;
-}
-
-.notification-badge.right {
-  position: absolute;
-  top: -3px;
-  right: 15px;
-  background: #ed4956;
-  color: rgb(223, 224, 226);
-  border-radius: 12px;
-  padding: 1px 5px;
-  font-size: 9px;
-  font-weight: bold;
-  box-shadow: 0 1px 4px #ed495633;
-  z-index: 1;
-  min-width: 13px;
-  text-align: center;
-  letter-spacing: 0.2px;
 }
 
 .nav-icon {
-  font-size: 13px !important;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 20px;
 }
 
 .nav-text {
-  color: inherit;
-  display: inline;
-  font-size: 11px !important;
-  font-weight: 500;
-  margin: 0;
-  line-height: 1.1;
-  text-align: left;
+  font-size: 16px;
 }
 
-@media (max-width: 756px) {
-  .container { padding: 0 6px; }
-  .link-all { gap: 8px; }
-  .nav-link, .logout-btn {
-    font-size: 11px;
-    padding: 4px 5px;
-    border-radius: 5px;
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.logout-btn {
+  background-color: #dc3545; /* Red color for logout */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+}
+
+/* --- Media Queries --- */
+
+/*  */
+
+@media (max-width: 576px) {
+  .navbar .container {
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
   }
-  .nav-icon { font-size: 10px !important; }
-  .nav-text { font-size: 9px !important; }
-}
 
-@media (max-width: 520px) {
-  .nav-icon { font-size: 9px !important; }
-  .notification-badge.right { font-size: 7px; padding: 0.5px 3px; min-width: 8px; right: -6px; top: -6px;}
-  .nav-link, .logout-btn { font-size: 9px; padding: 3px; }
-  .nav-text { font-size: 7px !important; }
-}
+  .navbar-brand {
+    flex-grow: 1;
+    text-align: left;
+  }
 
-@media (max-width: 340px) {
-  .container { padding: 0 1px;}
-  .link-all { gap: 2px;}
-  .nav-icon { font-size: 7px !important; }
-  .notification-badge.right { font-size: 6px; padding: 0.5px 2px; min-width: 5px; right: -4px; top: -4px;}
-  .nav-link, .logout-btn { font-size: 7px; padding: 2px;}
-  .nav-text { font-size: 5.5px !important; }
+  .menu-icon {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+    color: white;
+  }
+
+  .link-all {
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: #333;
+    padding: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    z-index: 1000;
+  }
+
+  .link-all.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-link,
+  .logout-btn {
+    width: 100%;
+    text-align: center; /* Center the entire link/button content */
+    padding: 12px 20px;
+    border-radius: 0;
+
+    /* New styles for icon above text and centering */
+    flex-direction: column; /* Stack icon and text vertically */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically (for content within the link) */
+  }
+
+  .nav-link:hover,
+  .logout-btn:hover {
+    background-color: #575757;
+  }
+
+  .nav-text {
+    display: block;
+    margin-left: 0; /* Remove left margin for vertical stacking */
+    margin-top: 5px; /* Add space between icon and text */
+  }
+
+  .nav-icon {
+    font-size: 22px;
+  }
+
+  .notification-badge {
+    right: auto; /* Remove fixed right position */
+    left: 50%; /* Center horizontally relative to icon wrapper */
+    transform: translateX(-50%) translateY(-100%); /* Adjust for vertical alignment above icon */
+    top: 0; /* Position at the top */
+  }
+
+  /* Specific adjustment for the notification icon wrapper */
+  .notification-icon-wrapper {
+    display: flex;
+    flex-direction: column; /* Ensure wrapper itself stacks if needed */
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Essential for positioning the badge */
+  }
 }
