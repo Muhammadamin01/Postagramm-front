@@ -50,6 +50,8 @@ const AdminPage = () => {
   const [userSearch, setUserSearch] = useState('');
   const [deleting, setDeleting] = useState({});
   const [saving, setSaving] = useState(false);
+  // State to track if image should be removed
+  const [deleteCurrentPostImage, setDeleteCurrentPostImage] = useState(false); 
 
   const fileInputRef = useRef();
   const navigate = useNavigate();
@@ -139,14 +141,26 @@ const AdminPage = () => {
       job: data.job || "" 
     });
     setImgPreview(data.profileImage?.url || data.postImage?.url || '');
+    // Reset the deleteCurrentPostImage state when a new modal opens
+    setDeleteCurrentPostImage(false); 
   };
 
   // Edit modal inputlar
   const handleEditChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files && files[0]) {
+    const { name, value, files, type, checked } = e.target;
+    if (type === 'file' && files && files[0]) {
       setEditData(prev => ({ ...prev, [name]: files[0] }));
       setImgPreview(URL.createObjectURL(files[0]));
+      // If a new file is selected, ensure delete checkbox is unchecked
+      setDeleteCurrentPostImage(false); 
+    } else if (name === 'deleteCurrentPostImage') { // Handle the new checkbox
+      setDeleteCurrentPostImage(checked);
+      // If delete is checked, clear any selected new file
+      if (checked) {
+        setEditData(prev => ({ ...prev, postImage: undefined })); // Clear the file data
+        if (fileInputRef.current) fileInputRef.current.value = ''; // Clear file input visual
+        setImgPreview(''); // Clear image preview
+      }
     } else {
       setEditData(prev => ({ ...prev, [name]: value }));
     }
@@ -162,11 +176,17 @@ const AdminPage = () => {
       for (let key in editData) {
         if (
           editData[key] !== undefined &&
-          (key !== "password" || editData.password)
+          (key !== "password" || editData.password) // Only include password if it's not empty
         ) {
           fd.append(key, editData[key]);
         }
       }
+
+      // Add the deleteCurrentPostImage flag to FormData if it's a post and checked
+      if (modal.type === 'post' && deleteCurrentPostImage) {
+        fd.append('deleteCurrentPostImage', true);
+      }
+
       const url = `${API}/${modal.type}/${editData._id}`;
       const res = await axios.put(url, fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -191,7 +211,9 @@ const AdminPage = () => {
             : item
         ));
       }
-      setModal(null); setImgPreview('');
+      setModal(null); 
+      setImgPreview('');
+      setDeleteCurrentPostImage(false); // Reset this state
     } catch (e) {
       setErr(e?.response?.data?.message || e.message);
     }
@@ -203,8 +225,12 @@ const AdminPage = () => {
     if (role !== "101") navigate('/home', { replace: true });
   }, [navigate]);
 
-  const closeModal = () => { setModal(null); setImgPreview(''); };
-  const isAdmin = user => (user.role === 101 || user.role === '101');
+  const closeModal = () => { 
+    setModal(null); 
+    setImgPreview(''); 
+    setDeleteCurrentPostImage(false); // Also reset on close
+  };
+  const isAdmin = user => (user.role === 101 || user.role === '101'); // This function is not used in the provided code.
 
   return (
     <div className="admin-container">
@@ -407,9 +433,24 @@ const AdminPage = () => {
                     <label>Rasm:
                       <input className="admin-form-control" type="file" name="postImage"
                         ref={fileInputRef}
-                        onChange={handleEditChange} />
-                      {imgPreview && <img src={imgPreview} alt="preview" width={30} height={30} style={{ borderRadius: "50%", objectFit: "cover" }} />}
+                        onChange={handleEditChange}
+                        disabled={deleteCurrentPostImage} // Disable if delete checkbox is checked
+                      />
+                      {/* Show preview only if delete checkbox is NOT checked and there's a preview */}
+                      {!deleteCurrentPostImage && imgPreview && <img src={imgPreview} alt="preview" width={30} height={30} style={{ borderRadius: "50%", objectFit: "cover" }} />}
                     </label>
+                    {/* New checkbox for deleting the current image */}
+                    {modal.data.postImage?.url && ( // Only show if there's an existing image
+                      <label className="admin-checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="deleteCurrentPostImage"
+                          checked={deleteCurrentPostImage}
+                          onChange={handleEditChange}
+                        />
+                        <span>Hozirgi rasmni o‘chirish</span>
+                      </label>
+                    )}
                   </>
                 )}
                 {modal.type === 'comment' && (

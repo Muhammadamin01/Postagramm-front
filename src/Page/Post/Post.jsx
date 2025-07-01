@@ -1054,7 +1054,6 @@ const Post = () => {
     <div className='post-page d-flex flex-column min-vh-100'>
       {postsLoading && <CustomLoader />}
 
-      <Navbar /> {/* Assuming Navbar is part of the layout */}
 
       <div className="text-center mt-5">
         {error && <div className="alert alert-danger">{error}</div>}
